@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.17/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>   
+    <script>$('#widget').draggable();</script>
+</head>
+
+<script>   
+$(document).ready(function(){    
+    
+        
+       var canvas = document.getElementById("lienzo");
+        var ctx = canvas.getContext("2d");
+
+        var degrees = 0;
+    var image = document.createElement("img");
+    $('input[type=file]').change(function() {
+                
+        var file = (this.files[0].name).toString();
+        var reader = new FileReader();
+        
+        
+
+        
+        image.onload = function() {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          ctx.drawImage(image, 0, 0);
+        }
+         reader.onload = function (e) {
+             image.src = e.target.result;
+         }
+         reader.readAsDataURL(this.files[0]);
+    });
+    
+    $("#clockwise").click(function() {
+      degrees += 90
+      if (degrees >= 360) degrees = 0;
+
+      if (degrees === 0 || degrees === 180) {
+        canvas.width = image.width;
+        canvas.height = image.height;
+      } else {
+        // swap
+        canvas.width = image.height;
+        canvas.height = image.width;
+      }
+      ctx.save();
+      // you want to rotate around center of canvas
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+
+      ctx.rotate(degrees * Math.PI / 180);
+
+      ctx.drawImage(image, -image.width * 0.5, -image.height * 0.5);
+      ctx.restore();
+    });
+
+});
+    </script>
+    
+    
+    
+<script> 
+    
+    //Creacion de elemento funda en canvas 
+    function comenzar() {
+        var elemento = document.getElementById("funda");
+        lienzo = elemento.getContext("2d");
+        var imagen = new Image();
+        imagen.src = "funda.png";
+        imagen.addEventListener("load", manipularimagen, false);
+    }
+
+    function manipularimagen(e) {
+        imagen = e.target;
+        lienzo.drawImage(imagen, 0, 0);
+    }
+    window.addEventListener("load", comenzar, false);
+
+
+
+    $(document).ready(function() {
+
+        var i = 0;
+        var a = 0;
+
+        var touchEndDetected = false;
+        var mouseOverDetected = false;
+
+        $("#funda").on('mousemove touchmove ', function(e) {
+            let xA = $("#lienzo").position().left;
+            let yA = $("#lienzo").position().top;
+            let xR
+            let yR
+            let xI = e.pageX
+            let yI = e.pageY
+            if (!xI) {
+                xI = e.originalEvent.touches[0].pageX;
+                yI = e.originalEvent.touches[0].pageY
+            }
+
+            $("#funda").on('mousedown touchstart ', function(e) {
+                xR = e.pageX;
+                yR = e.pageY;
+                a = 1;
+            });
+            $("#funda").on('mouseup touchend', function(e) {
+                a = 0
+            });
+            if (a) {
+                console.log(a);
+                $("#lienzo").css({
+                    "left": xI,
+                    "top": yI
+                });
+            }
+        })
+        
+        
+        $('#hdt').on('input', function() {
+            let wdt = $("#lienzo").width();
+            hdt = $(this).val();
+            $("#lienzo").css('width', wdt);
+            $("#lienzo").css('height', hdt);
+        })
+        $('#wdt').on('input', function() {
+            let hdt = $("#lienzo").height();
+            wdt = $(this).val();
+            $("#lienzo").css('width', wdt);
+            $("#lienzo").css('height', hdt);
+        })
+         
+    });
+</script>
+<script>
+ 
+</script>
+<style>
+  
+    
+    
+    
+    .sizebar{
+        width: 100%;
+        background: black;
+    }
+    #wdt,#hdt{
+        height: 50px;
+        width: 100%;
+    }
+    #clockwise{
+        display: block;
+        padding: 30px;
+    }
+     
+     
+    section{
+        //position: relative;
+        background: red;
+        
+    }
+    canvas.lienzo{
+        position: absolute;
+/*        background: red;*/
+        left: 0;
+        max-width: 800px;
+    }
+    #funda{
+        position: absolute;
+        z-index: 1000;
+/*        display: none;*/
+    }
+    #lolo{
+        overflow: hidden;
+    }
+    body{
+        overflow: hidden;
+/*        background: black;*/
+    }
+    #clockwise{
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+        z-index: 30000;
+    }
+    label{
+        position: absolute;
+        z-index: 4000;
+        padding: 20px;
+        bottom: 0;
+        right: 20px;
+        background: white;
+    }
+</style>
+<body>
+<button id="clockwise">Rotar imagen</button>
+<div class="sizebar">
+  <input id="wdt"type="range" min="100" max="800" value="400">
+  <div class="bnts">
+      
+  </div>
+</div>
+<div class="sizebar">
+  <input id="hdt"type="range" min="100" max="800" value="400">
+  <div class="bnts">
+      
+  </div>
+</div>
+   <div id="" class="">
+   <label for="file">Elegir archivo</label>
+    <canvas class="lienzo" id="lienzo" width="800px" height="800px"></canvas>
+</div>
+<form id="file-submit" enctype="multipart/form-data" style="display: none;">
+    <input id="file" name="file" type="file"/>
+</form>
+    <section id="lolo">
+        <canvas id="funda" width="800px" height="800px" ></canvas>
+        
+        
+        <div id="" class="">
+   <label for="file">Elegir archivo</label>
+    <canvas class="lienzo" id="lienzo" width="800px" height="800px"></canvas>
+</div>
+<form id="file-submit" enctype="multipart/form-data" style="display: none;">
+    <input id="file" name="file" type="file"/>
+</form>
+    </section>
+    
+</body>
+</html>
